@@ -678,17 +678,6 @@ class IvyJar(JavaJar):
 
 
 @attr.s()
-class BowerPackage(Package):
-    metafiles = ('bower.json',)
-    default_type = 'bower'
-    default_primary_language = 'JavaScript'
-
-    @classmethod
-    def get_package_root(cls, manifest_resource, codebase):
-        return manifest_resource.parent(codebase)
-
-
-@attr.s()
 class MeteorPackage(Package):
     metafiles = ('package.js',)
     default_type = 'meteor'
