@@ -214,8 +214,18 @@ class TestMavenMisc(BaseMavenCase):
     def test_parse_to_package_then_back(self):
         test_file = self.get_test_loc('maven_misc/spring-beans-4.2.2.RELEASE.pom.xml')
         package = maven.parse(test_file)
-        package2 = maven.MavenPomPackage(**package.to_dict(exclude_properties=True))
+        packaged = package.to_dict()
+        del packaged['purl']
+        del packaged['repository_homepage_url']
+        del packaged['repository_download_url']
+        del packaged['api_data_url']
+        
+        package2 = maven.MavenPomPackage(**packaged)
         assert package.to_dict().items() == package2.to_dict().items()
+
+        # create ignore unknown fields
+        package3 = maven.MavenPomPackage.create(**package.to_dict())
+        assert package.to_dict().items() == package3.to_dict().items()
 
     def test_package_root_is_properly_returned_for_metainf_poms(self):
         test_dir = self.get_test_loc('maven_misc/package_root')

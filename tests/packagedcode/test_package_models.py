@@ -105,6 +105,24 @@ class TestModels(PackageTester):
         )
         assert 'this=that' == package.to_dict()['qualifiers']
 
+    def test_Package_model_qualifiers_are_serialized_normalized(self):
+        package = models.Package(
+            type='maven',
+            name='this',
+            version='23',
+            qualifiers=OrderedDict(this='that', abc='asdasdasd//3#?.')
+        )
+        assert 'abc=asdasdasd//3%23%3F.&this=that' == package.to_dict()['qualifiers']
+
+    def test_Package_model_files_are_serialized_optionally(self):
+        package = models.Package(
+            type='maven',
+            name='this',
+            version='23',)
+        assert [] == package.to_dict(with_files=True)['files']
+        package.files.append(models.Resource(type='file', path='some/path'))
+        assert [OrderedDict([('path', u'some/path'), ('type', u'file')])] == package.to_dict(with_files=True)['files']
+
     def test_Package_full(self):
         package = Package(
             type='rpm',

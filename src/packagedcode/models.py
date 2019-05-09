@@ -300,7 +300,7 @@ class BasePackage(BaseModel):
             if not self_val and purl_val:
                 setattr(self, att, purl_val)
 
-    def to_dict(self, **kwargs):
+    def to_dict(self, with_files=False, **kwargs):
         """
         Return an OrderedDict of primitive Python types.
         """
@@ -308,11 +308,14 @@ class BasePackage(BaseModel):
         if self.qualifiers:
             mapping['qualifiers'] = normalize_qualifiers(self.qualifiers, encode=True)
 
-        if not kwargs.get('exclude_properties'):
-            mapping['purl'] = self.purl
-            mapping['repository_homepage_url'] = self.repository_homepage_url()
-            mapping['repository_download_url'] = self.repository_download_url()
-            mapping['api_data_url'] = self.api_data_url()
+        mapping['purl'] = self.purl
+        mapping['repository_homepage_url'] = self.repository_homepage_url()
+        mapping['repository_download_url'] = self.repository_download_url()
+        mapping['api_data_url'] = self.api_data_url()
+        
+        if not with_files:
+            mapping.pop('files')
+
         return mapping
 
     @classmethod
@@ -364,6 +367,22 @@ class DependentPackage(BaseModel):
         help='True if this dependency version requirement has '
              'been resolved and this dependency url points to an '
              'exact version.')
+
+
+@attr.s()
+class Resource(BaseModel):
+    """
+    A resource represent a file or directory with minimal information.
+    """
+    path = String(
+        repr=True,
+        label='path',
+        help='The file or directory POSIX path decoded as unicode using the filesystem encoding.')
+
+    type = String(
+        repr=True,
+        label='type',
+        help='The resource type: either a "file" or a "directory"')
 
 
 @attr.s()
@@ -480,6 +499,11 @@ class Package(BasePackage):
         help='A list of related  source code Package URLs (aka. "purl") for '
              'this package. For instance an SRPM is the "source package" for a '
              'binary RPM.')
+
+    files = List(
+        item_type=Resource,
+        label='List of files and directories contained in this package',
+        help='List of files and directories contained in this package.')
 
     def __attrs_post_init__(self, *args, **kwargs):
         if not self.type and hasattr(self, 'default_type'):
