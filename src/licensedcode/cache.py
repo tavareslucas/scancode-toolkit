@@ -282,7 +282,13 @@ _ignored_from_hash = partial(
     ignores={
         '*.pyc': 'pyc files',
         '*~': 'temp gedit files',
-        '*.swp': 'vi swap files'
+        '*.swp': 'vi swap files',
+        '*/cluecode/*': 'cluecode',
+        '*/formattedcode/*': 'formattedcode',
+        '*/packagedcode/*': 'packagedcode',
+        '*/plugincode/*': 'plugincode',
+        '*/scancode/*': 'scancode',
+        '*/summarycode/*': 'summarycode',
     },
     unignores={}
 )
