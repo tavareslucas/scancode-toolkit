@@ -42,7 +42,7 @@ from scancode import SCAN_GROUP
 
 
 # Tracing flags
-TRACE = True
+TRACE = False
 
 
 def logger_debug(*args):
@@ -269,6 +269,8 @@ def combine_license_expressions(expressions, simplify=False):
     Return a license expression string combining multiple `expressions` with an
     AND.
     """
+    expressions = [e for e in expressions if e and e.strip()]
+
     if len(expressions) == 1:
         return expressions[0]
 
