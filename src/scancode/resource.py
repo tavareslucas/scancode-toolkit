@@ -1017,7 +1017,7 @@ class Resource(object):
 
     @property
     def is_dir(self):
-        #note: we only store is_file
+        # note: we only store is_file
         return not self.is_file
 
     @property
@@ -1124,6 +1124,40 @@ class Resource(object):
             if not topdown:
                 yield child
 
+    def flexwalk(self, codebase, topdown=True):
+        """
+        Walk all descendant Resources of this Resource in a way similar to
+        os.walk. Does not include self and does not yield anything if this
+        resource is a file or an empty directory (e.g. it does not have
+        children).
+
+        Yield lists of Resources.
+
+        Walk the tree top-down, depth-first if `topdown` is True, otherwise walk
+        bottom-up.
+
+        Each level is sorted by children sort order (e.g. without-children, then
+        with-children and each group by case-insensitive name).
+
+        When `topdown` is True, you can modify the returned list of [directory
+        Resources] in-place while iterating and this will only recurse into the
+        subdirectories that are in this list. This is will not have the expected
+        behaviour if `topdown` is False.
+        """
+        children = [attr.evolve(child) for child in self.children(codebase)]
+
+        if children and topdown:
+            yield children
+
+        for child in children:
+            for childs in child.flexwalk(codebase, topdown):
+                if childs:
+                    yield childs
+
+        if children and not topdown:
+            yield children
+
+
     def has_children(self):
         """
         Return True is this Resource has children.
@@ -1137,9 +1171,12 @@ class Resource(object):
         Sorting is by resources without children, then resource with children
         (e.g. directories or files with children), then case-insentive name.
         """
-        _sorter = lambda r: (r.has_children(), r.name.lower(), r.name)
-        get_resource = codebase.get_resource
-        return sorted((get_resource(rid) for rid in self.children_rids), key=_sorter)
+        if self.has_children():
+            _sorter = lambda r: (r.has_children(), r.name.lower(), r.name)
+            get_resource = codebase.get_resource
+            return sorted((get_resource(rid) for rid in self.children_rids), key=_sorter)
+        else:
+            return []
 
     def has_parent(self):
         """
@@ -1193,7 +1230,7 @@ class Resource(object):
         Return a sequence of descendant Resource objects
         (does NOT include self).
         """
-        return list(self.walk(codebase,topdown=True))
+        return list(self.walk(codebase, topdown=True))
 
     def distance(self, codebase):
         """
@@ -1460,7 +1497,7 @@ class VirtualCodebase(Codebase):
 
         # Collect codebase-level attributes and build a class, then load
         ##########################################################
-        standard_cb_attrs = set(['headers', 'files',])
+        standard_cb_attrs = set(['headers', 'files', ])
         all_cb_attributes = build_attributes_defs(scan_data, standard_cb_attrs)
         # We add in the attributes that we collected from the plugins. They come
         # last for now.
