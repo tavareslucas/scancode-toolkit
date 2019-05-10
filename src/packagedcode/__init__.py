@@ -84,6 +84,7 @@ PACKAGE_TYPES = [
     chef.ChefPackage,
     build.BazelPackage,
     build.BuckPackage,
+    build.AutotoolsPackage,
 ]
 
 PACKAGES_BY_TYPE = {cls.default_type: cls for cls in PACKAGE_TYPES}
