@@ -52,16 +52,12 @@ gradle, Buck, Bazel, Pants, etc.
 
 
 @attr.s()
-class BazelPackage(models.Package):
-    metafiles = ('BUILD',)
-    default_type = 'bazel'
+class BaseBuildManifestPackage(models.Package):
+    metafiles = tuple()
 
     @classmethod
     def recognize(cls, location):
-        """
-        Return a Package object or None.
-        """
-        if not cls._is_manifest(location):
+        if not cls._is_build_manifest(location):
             return
 
         # we use the parent directory as a name
@@ -75,26 +71,29 @@ class BazelPackage(models.Package):
         # dependencies = []
         return cls(
             name=name,
-            version=version,
-        )
-
-    def compute_normalized_license(self):
-        return
+            version=version)
 
     @classmethod
-    def get_package_root(cls, manifest_resource, codebase):
-        return manifest_resource.parent(codebase)
-
-    @classmethod
-    def _is_manifest(cls, location):
-        return (filetype.is_file(location) 
-            and fileutils.file_name(location)==cls.metafiles[0])
-
+    def _is_build_manifest(cls, location):
+        if not filetype.is_file(location):
+            return False
+        fn = fileutils.file_name(location)
+        return any(fn == mf for mf in cls.metafiles)
 
 
 @attr.s()
-class BuckPackage(BazelPackage):
+class AutotoolsPackage(BaseBuildManifestPackage):
+    metafiles = ('configure', 'configure.ac',)
+    default_type = 'autotools'
+
+
+@attr.s()
+class BazelPackage(BaseBuildManifestPackage):
+    metafiles = ('BUILD',)
+    default_type = 'bazel'
+
+
+@attr.s()
+class BuckPackage(BaseBuildManifestPackage):
     metafiles = ('BUCK',)
     default_type = 'buck'
-
-
