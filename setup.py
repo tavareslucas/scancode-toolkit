@@ -263,6 +263,7 @@ setup(
             'mark-source = scancode.plugin_mark_source:MarkSource',
             'classify-package = summarycode.classify:PackageTopAndKeyFilesTagger',
             'is-license-text = licensedcode.plugin_license_text:IsLicenseText',
+            'package-summary = packagedcode.plugin_package:PackageSummary',
         ],
 
         # scancode_output_filter is the entry point for filter plugins executed

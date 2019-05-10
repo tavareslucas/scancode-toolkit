@@ -28,11 +28,37 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import attr
+from license_expression import Licensing
 
-from plugincode.scan import ScanPlugin
+from packagedcode import get_package_class
+from packagedcode import models
+from plugincode.post_scan import post_scan_impl
+from plugincode.post_scan import PostScanPlugin
 from plugincode.scan import scan_impl
+from plugincode.scan import ScanPlugin
 from scancode import CommandLineOption
+from scancode import POST_SCAN_GROUP
 from scancode import SCAN_GROUP
+
+
+# Tracing flags
+TRACE = True
+
+
+def logger_debug(*args):
+    pass
+
+
+if TRACE:
+    import logging
+    import sys
+
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(stream=sys.stdout)
+    logger.setLevel(logging.DEBUG)
+
+    def logger_debug(*args):
+        return logger.debug(' '.join(isinstance(a, unicode) and a or repr(a) for a in args))
 
 
 @scan_impl
@@ -72,8 +98,6 @@ class PackageScanner(ScanPlugin):
         Move package manifest scan information to the proper file or
         directory level given a package type.
         """
-        from packagedcode import get_package_class
-
         if codebase.has_single_resource:
             # What if we scanned a single file and we do not have a root proper?
             return
@@ -132,3 +156,126 @@ class PackageScanner(ScanPlugin):
                 codebase.save_resource(new_package_root)
                 resource.packages = []
                 codebase.save_resource(resource)
+
+
+@post_scan_impl
+class PackageSummary(PostScanPlugin):
+    """
+    Summarize a scan at the Package levels. Mark summarized resources as "filtered".
+    """
+    sort_order = 10
+
+    options = [
+        CommandLineOption(('--package-summary',),
+            is_flag=True, default=False,
+            help='Summarize license and copyright at the package level. '
+                 'Filter summarized files',
+            help_group=POST_SCAN_GROUP)
+    ]
+
+    def is_enabled(self, package_summary, **kwargs):
+        return package_summary
+
+    def process_codebase(self, codebase, package_summary, with_files=False, **kwargs):
+        # find which attributes are available for summarization by checking the root
+        # resource
+        root = codebase.root
+        if not hasattr(root, 'packages'):
+            if TRACE:
+                logger_debug('PackageSummary: process_codebase: no packages')
+            return
+
+        # keep a set of resources that are part of packages and a set of resources
+        # that are not part of packages
+        packaged_resource_rids = set()
+        free_resource_rids = set()
+
+        for resource in codebase.walk(topdown=True):
+            packages_info = resource.packages
+            if not packages_info and resource.rid not in packaged_resource_rids:
+                if TRACE:
+                    logger_debug('PackageSummary: process_codebase: free resource', resource.path)
+
+                free_resource_rids.add(resource.rid)
+                continue
+
+            if TRACE:
+                logger_debug('PackageSummary: process_codebase: package resource', resource.path)
+
+            # here we are at the root of a package.
+            ###########################
+            # FIXME: we DO NOT deal for now properly with multiple package at the same root!!!!
+            # if len(packages_info) > 1:
+            #     raise Exception('Cannot summarize a directory that contain multiple packages.')
+            ###########################
+            for package_info in packages_info:
+                package_class = get_package_class(package_info)
+                package_resources = list(package_class.get_package_resources(resource, codebase))
+                if TRACE:
+                    logger_debug('PackageSummary: process_codebase: summarizing resources', '\n'.join(r.path for r in package_resources))
+
+                if not package_resources:
+                    continue
+
+                packaged_resource_rids.update(r.rid for r in package_resources)
+
+                # set the files list optionally
+                if with_files:
+                    files = getattr(package_info, 'files', None)
+                    if files is None:
+                        package_info['files'] = files = []
+                    files.extend(models.Resource(**r.to_dict(skinny=True))
+                                 for r in package_resources)
+
+                # collect and set licenses and copyrights of all package resources
+                license_expressions = []
+                package_license_expression = package_info.get('license_expression')
+                if package_license_expression:
+                    license_expressions.append(package_license_expression)
+
+                copyrights = []
+                package_copyright = package_info.get('copyright')
+                if package_copyright:
+                    copyrights.append(package_copyright)
+
+                for packres in package_resources:
+                    license_expressions.extend(getattr(packres, 'license_expressions', []))
+
+                    coprs = (c['value'] for c in getattr(packres, 'copyrights', []))
+                    copyrights.extend(coprs)
+
+                license_expressions = combine_license_expressions(license_expressions, simplify=True)
+                package_info['license_expression'] = license_expressions
+
+                copyrights = '\n'.join(copyrights)
+                package_info['copyright'] = copyrights
+
+                if TRACE:
+                    logger_debug('PackageSummary: process_codebase: summary: license', license_expressions, 'copyright:', copyrights)
+
+
+            codebase.save_resource(resource)
+
+        # also mark all the "packaged" resource as "filtered"
+        for prid in packaged_resource_rids:
+            pr = codebase.get_resource(prid)
+            pr.is_filtered = True
+            codebase.save_resource(pr)
+
+
+# TODO: improve what is returned
+def combine_license_expressions(expressions, simplify=False):
+    """
+    Return a license expression string combining multiple `expressions` with an
+    AND.
+    """
+    if len(expressions) == 1:
+        return expressions[0]
+
+    licensing = Licensing()
+    # join the possible multiple detected license expression with an AND
+    expression_objects = [licensing.parse(e, simple=True) for e in expressions]
+    combined_expression_object = licensing.AND(*expression_objects)
+    if simplify:
+        combined_expression_object = combined_expression_object.simplify()
+    return str(combined_expression_object)
