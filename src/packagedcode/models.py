@@ -536,10 +536,27 @@ class Package(BasePackage):
         of a "xyz.pom" file found inside a JAR META-INF/ directory, the root is
         the JAR itself which may not be the direct parent
 
-        Each package type should subclass as needed. This deafult to return the
+        Each package type should subclass as needed. This defaults to return the
         same path.
         """
         return manifest_resource
+
+    @classmethod
+    def get_package_resources(cls, root_resource, codebase):
+        """
+        Return a sequence of `codebase` Resource that are part of a package
+        given its `root_resource`.
+
+        Each package type can subclass as needed. This defaults to return all
+        the descendant resources below the package `root_resource` that are not
+        otherwise part of a children package: a resource can only be part of a
+        single package and a package owns all the resources below itself, unless
+        there is a package below.
+        """
+        for resources in root_resource.flexwalk(codebase, topdown=True):
+            for resource in resources:
+                if not resource.packages:
+                    yield resource
 
     def compute_normalized_license(self):
         """
