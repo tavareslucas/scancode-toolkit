@@ -111,8 +111,10 @@ def chef_api_url(name, version, registry='https://supermarket.chef.io/api/v1'):
 
 
 def is_metadata_json(location):
+    parent_directory = fileutils.parent_directory(location).lower().rstrip(('/', '\\',))
     return (filetype.is_file(location)
-            and fileutils.file_name(location).lower() == 'metadata.json')
+            and fileutils.file_name(location).lower() == 'metadata.json'
+            and not parent_directory.endswith('dist-info'))
 
 
 def is_metadata_rb(location):
