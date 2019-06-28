@@ -1,0 +1,83 @@
+{
+  "paths": [
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos-0.8.0-py3.5.egg-info/PKG-INFO",
+      "path_type": "hardlink",
+      "sha256": "ed8feca4af793200bbdba46ab8bde8433867cbbde50563c4b7c34d970cb847dc",
+      "size_in_bytes": 5718
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos-0.8.0-py3.5.egg-info/SOURCES.txt",
+      "path_type": "hardlink",
+      "sha256": "a93342120d9ec4146101de19766d344713ba1d41313c9b5fcf9dbd9dd1ea27c5",
+      "size_in_bytes": 411
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos-0.8.0-py3.5.egg-info/dependency_links.txt",
+      "path_type": "hardlink",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "size_in_bytes": 1
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos-0.8.0-py3.5.egg-info/requires.txt",
+      "path_type": "hardlink",
+      "sha256": "47e445b22545045822bd29c2584bf16c43150354a9604eb8cdffdf9c683817ab",
+      "size_in_bytes": 112
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos-0.8.0-py3.5.egg-info/top_level.txt",
+      "path_type": "hardlink",
+      "sha256": "31febe64661ffa3b487036c3ea7c73019854a4838ca78c36eebbfc62d48bf1de",
+      "size_in_bytes": 18
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos/__init__.py",
+      "path_type": "hardlink",
+      "sha256": "4c40b7f73cce894da1b7df4020f0bcb755404ad3893ae95537625f8a25d59bf0",
+      "size_in_bytes": 843
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos/__pycache__/__init__.cpython-35.pyc",
+      "path_type": "hardlink",
+      "sha256": "16a18a494eb5e98c8e5043b72d777c0aa17b99fd79690c912e72468a3c67578b",
+      "size_in_bytes": 1059
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos/__pycache__/compat.cpython-35.pyc",
+      "path_type": "hardlink",
+      "sha256": "f8b772159f3587c31c66e4312d8b949917b15bc0b90c24202723742b78a57905",
+      "size_in_bytes": 649
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos/__pycache__/exceptions.cpython-35.pyc",
+      "path_type": "hardlink",
+      "sha256": "b976a28741cfb54f2afd2bebf3e7c65ee4d8fec94cad1c79d4829286a7b36b05",
+      "size_in_bytes": 541
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos/__pycache__/kerberos_.cpython-35.pyc",
+      "path_type": "hardlink",
+      "sha256": "ed918119344b7f802a50408a45e4e4b8afad3239205d1c80c0d5a6a94e22ae5d",
+      "size_in_bytes": 8174
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos/compat.py",
+      "path_type": "hardlink",
+      "sha256": "e1fce0b69b31ec34a026a47006db658edf2b2abc3f68f91cb29ac466be015c31",
+      "size_in_bytes": 385
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos/exceptions.py",
+      "path_type": "hardlink",
+      "sha256": "9a9fd62eea208a57ca71579a8165d6218356b26fa3201383c004d9a14e506b6e",
+      "size_in_bytes": 243
+    },
+    {
+      "_path": "lib/python3.5/site-packages/requests_kerberos/kerberos_.py",
+      "path_type": "hardlink",
+      "sha256": "8cfd4b7a6968f4463d97568d33561bca622d07a39b486d38395ae0aeb9cffebd",
+      "size_in_bytes": 11479
+    }
+  ],
+  "paths_version": 1
+}
