@@ -1,0 +1,37 @@
+------------------------------- here.com ---------------------------------------
+OSS Review Toolkit uses ScanCode, which our extensive evaluation of both
+commercial and open source scanning solutions found to be the best overall scanner
+Especially the fact that ScanCode is developed as an open source project allows
+the community to improve license detection which enables OSS Review Toolkit to
+scale FOSS reviews in CI/CD.
+
+Sebastian Schuberth and Thomas Steenbergen
+Maintainers of OSS Review Toolkit / Open Source Office at HERE Technologies
+--------------------------------------------------------------------------------
+
+- max sills @ google: "ScanCode is a wonderful tool. We use it extensively"
+- eclipse (janet and wayne and mike) 
+https://bugs.eclipse.org/bugs/show_bug.cgi?id=499950#c12
+
+- amazon
+- facebook
+- redhat
+- bitergia
+- simonphipps
+- clearly defined
+- jeff @ microsoft
+- mentor and openembedded https://github.com/openembedded/meta-openembedded/blob/612128b46d183934bda7d0c7e224a313fc54d227/meta-oe/classes/scancode.bbclass#L1
+- quartermaster
+- arminj hemel
+- bmw car it
+- GENIVI?- @jeremiah foster? https://github.com/jeremiah
+
+
+https://twit.tv/shows/floss-weekly/episodes/471
+--------------------------------------------------------------------------------
+https://github.com/search?q=org%3Azephyrproject-rtos+scancode&type=Code
+https://github.com/pgier/scancode-docker
+https://github.com/nnsuite/TAOS-CI/commit/c61c6af005c1b976c99962d2fdf563ea9909578d
+https://github.com/chaoss/grimoirelab-graal/commit/ec7f195407a7ef3c2f061b0a1cb3fa7e2abbfdfe'
+https://github.com/DragonFlyBSD/DeltaPorts/commit/84014941c12a7930439bb6e8cd70d4459463a803
+https://github.com/maxhbr/LicenseScannerComparison/commit/c7ce754d8597f02736a2f94c644dcf93f552f3c9
